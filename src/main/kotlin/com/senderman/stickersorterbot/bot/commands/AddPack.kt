@@ -2,22 +2,19 @@ package com.senderman.stickersorterbot.bot.commands
 
 import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.services.CommonAbsSender
-import com.senderman.stickersorterbot.StickerManager
+import com.senderman.stickersorterbot.StickerService
 import com.senderman.stickersorterbot.bot.CommandExecutor
-import com.senderman.stickersorterbot.bot.MessageSender
+import com.senderman.stickersorterbot.bot.sendMessage
 import com.senderman.stickersorterbot.model.StickerEntity
 import com.senderman.stickersorterbot.model.StickerTag
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 
 @Component("/addpack")
-class AddPack<T>(
-        private val bot: T,
-        private val stickerManager: StickerManager
-) : CommandExecutor
-        where T : MessageSender,
-              T : CommonAbsSender {
+class AddPack(
+        private val bot: CommonAbsSender,
+        private val stickerManager: StickerService
+) : CommandExecutor {
 
     override val command = "/addpack"
 

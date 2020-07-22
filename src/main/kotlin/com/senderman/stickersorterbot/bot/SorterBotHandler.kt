@@ -2,11 +2,9 @@ package com.senderman.stickersorterbot.bot
 
 import com.annimon.tgbotsmodule.BotHandler
 import com.annimon.tgbotsmodule.api.methods.Methods
-import com.annimon.tgbotsmodule.api.methods.send.SendMessageMethod
-import com.senderman.stickersorterbot.StickerManager
+import com.senderman.stickersorterbot.StickerService
 import com.senderman.stickersorterbot.model.StickerEntity
 import com.senderman.stickersorterbot.model.StickerTag
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod
@@ -28,9 +26,9 @@ class SorterBotHandler(
         @Value("\${bot.username}")
         private var botUsername: String,
 
-        private val stickerManager: StickerManager,
+        private val stickerManager: StickerService,
         private val commands:CommandExtractor
-) : BotHandler(), MessageSender {
+) : BotHandler() {
 
     override fun onUpdate(update: Update): BotApiMethod<*>? {
 
@@ -59,7 +57,7 @@ class SorterBotHandler(
         return null
     }
 
-    fun handleInlineQuery(query: InlineQuery) {
+    private fun handleInlineQuery(query: InlineQuery) {
         val tagsString = query.query.trim()
 
         if (!tagsString.matches(Regex("(\\p{LD}\\s*)+"))) {
@@ -88,7 +86,7 @@ class SorterBotHandler(
 
     }
 
-    fun handleSticker(message: Message) {
+    private fun handleSticker(message: Message) {
         val chatId = message.chatId
         val sticker = message.sticker
         val stickerEntity = StickerEntity(sticker.fileUniqueId, sticker.fileId)
@@ -98,7 +96,7 @@ class SorterBotHandler(
             sendMessage(chatId, "Этот стикер уже есть в неотсортированных!")
     }
 
-    fun answerInlineQuery(id: String, results: List<InlineQueryResult>) {
+    private fun answerInlineQuery(id: String, results: List<InlineQueryResult>) {
         Methods.answerInlineQuery()
                 .setInlineQueryId(id)
                 .setResults(results)
@@ -106,16 +104,6 @@ class SorterBotHandler(
                 .setCacheTime(1)
                 .call(this)
     }
-
-    override fun sendMessage(chatId: Long, text: String, replyToMessageId: Int?): Message = sendMessage(
-            Methods.sendMessage()
-                    .setChatId(chatId)
-                    .setText(text)
-                    .setReplyToMessageId(replyToMessageId)
-                    .enableHtml()
-    )
-
-    override fun sendMessage(sm: SendMessageMethod): Message = sm.enableHtml().call(this)
 
     override fun getBotUsername(): String = botUsername
 

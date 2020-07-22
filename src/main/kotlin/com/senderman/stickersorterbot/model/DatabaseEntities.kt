@@ -7,7 +7,7 @@ import java.util.*
 @TypeAlias("user")
 class User(
         @Id val userId: Int,
-        val password: String,
+        var password: String,
         val tags: MutableSet<StickerTag>
 ) {
 
@@ -26,19 +26,6 @@ class User(
             val newTag = StickerTag(name, mutableSetOf())
             tags.add(newTag)
             newTag
-        }
-    }
-
-    companion object {
-
-        /**
-         * Creates a new user with no stickers, random UUID password, and empty StickerTag.UNSORTED tag
-         * @param userId id of new user
-         * @return new User object
-         */
-        fun newUser(userId: Int): User {
-            val tag = StickerTag(StickerTag.UNSORTED, mutableSetOf())
-            return User(userId, UUID.randomUUID().toString(), mutableSetOf(tag))
         }
     }
 }
