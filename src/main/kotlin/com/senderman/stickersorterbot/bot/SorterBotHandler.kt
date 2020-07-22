@@ -2,8 +2,9 @@ package com.senderman.stickersorterbot.bot
 
 import com.annimon.tgbotsmodule.BotHandler
 import com.annimon.tgbotsmodule.api.methods.Methods
+import com.annimon.tgbotsmodule.api.methods.send.SendMessageMethod
 import com.senderman.stickersorterbot.StickerManager
-import com.senderman.stickersorterbot.model.Sticker
+import com.senderman.stickersorterbot.model.StickerEntity
 import com.senderman.stickersorterbot.model.StickerTag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -16,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessageconten
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResult
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.cached.InlineQueryResultCachedSticker
+import java.util.*
 
 @Component
 class SorterBotHandler(
@@ -27,8 +29,11 @@ class SorterBotHandler(
         private var botUsername: String,
 
         @Autowired
-        private val stickerManager: StickerManager
-) : BotHandler() {
+        private val stickerManager: StickerManager,
+
+        @Autowired
+        private val commands:CommandExtractor
+) : BotHandler(), MessageSender {
 
 
     override fun onUpdate(update: Update): BotApiMethod<*>? {
@@ -40,12 +45,20 @@ class SorterBotHandler(
 
         val message = update.message ?: return null
 
-        val chatId = message.chatId
-
         if (message.isUserMessage && message.hasSticker()) {
             handleSticker(message)
             return null
         }
+
+        val text = message.text ?: return null
+
+        val command = text
+                .split("\\s+".toRegex(), 2)[0]
+                .toLowerCase(Locale.ENGLISH)
+                .replace("@$botUsername", "")
+        if ("@" in command) return null
+
+        commands.findExecutor(command)?.execute(message)
 
         return null
     }
@@ -67,8 +80,8 @@ class SorterBotHandler(
             return
         }
 
-        val tags = if (!tagsString.isBlank()) listOf(StickerTag.UNSORTED) else tagsString.split(Regex("\\s+"))
-        val stickers = stickerManager.getStickersFromTags(query.from.id, tags)
+        val tags = tagsString.split(Regex("\\s+"))
+        val stickers = stickerManager.getStickersFromTags(query.from.id, tags).take(50) // telegram limit
         val result = stickers.map {
             InlineQueryResultCachedSticker().apply {
                 id = it.fileUniqueId
@@ -82,8 +95,7 @@ class SorterBotHandler(
     fun handleSticker(message: Message) {
         val chatId = message.chatId
         val sticker = message.sticker
-        val stickerEntity = Sticker(sticker.fileUniqueId, sticker.fileId)
-
+        val stickerEntity = StickerEntity(sticker.fileUniqueId, sticker.fileId)
         if (stickerManager.addUnsortedSticker(message.from.id, stickerEntity))
             sendMessage(chatId, "Стикер добавлен в ${StickerTag.UNSORTED} тег!")
         else
@@ -95,14 +107,19 @@ class SorterBotHandler(
                 .setInlineQueryId(id)
                 .setResults(results)
                 .setPersonal(true)
+                .setCacheTime(1)
                 .call(this)
     }
 
-    fun sendMessage(chatId: Long, text: String): Message = Methods.sendMessage()
-            .setChatId(chatId)
-            .setText(text)
-            .enableHtml()
-            .call(this)
+    override fun sendMessage(chatId: Long, text: String, replyToMessageId: Int?): Message = sendMessage(
+            Methods.sendMessage()
+                    .setChatId(chatId)
+                    .setText(text)
+                    .setReplyToMessageId(replyToMessageId)
+                    .enableHtml()
+    )
+
+    override fun sendMessage(sm: SendMessageMethod): Message = sm.enableHtml().call(this)
 
     override fun getBotUsername(): String = botUsername
 

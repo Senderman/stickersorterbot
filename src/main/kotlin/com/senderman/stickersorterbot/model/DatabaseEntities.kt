@@ -2,10 +2,12 @@ package com.senderman.stickersorterbot.model
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.TypeAlias
+import java.util.*
 
 @TypeAlias("user")
 class User(
         @Id val userId: Int,
+        val password: String,
         val tags: MutableSet<StickerTag>
 ) {
 
@@ -30,25 +32,25 @@ class User(
     companion object {
 
         /**
-         * Creates a new user with no stickers and empty StickerTag.UNSORTED tag
+         * Creates a new user with no stickers, random UUID password, and empty StickerTag.UNSORTED tag
          * @param userId id of new user
          * @return new User object
          */
         fun newUser(userId: Int): User {
             val tag = StickerTag(StickerTag.UNSORTED, mutableSetOf())
-            return User(userId, mutableSetOf(tag))
+            return User(userId, UUID.randomUUID().toString(), mutableSetOf(tag))
         }
     }
 }
 
 class StickerTag(
         @Id val name: String,
-        val stickers: MutableSet<Sticker>
+        val stickers: MutableSet<StickerEntity>
 ) {
 
 
     companion object {
-        const val UNSORTED = "unsorted"
+        const val UNSORTED = "несорт"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -67,7 +69,7 @@ class StickerTag(
     }
 }
 
-class Sticker(
+class StickerEntity(
         @Id val fileUniqueId: String,
         val fileId: String
 ) {
@@ -76,7 +78,7 @@ class Sticker(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Sticker
+        other as StickerEntity
 
         if (fileUniqueId != other.fileUniqueId) return false
 

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
  * For example: @Component("/help") class Help{...}
  */
 @Component
-class ExecutorKeeper(
+class CommandExtractor(
         @Autowired
         private val context: ApplicationContext
 ) {
