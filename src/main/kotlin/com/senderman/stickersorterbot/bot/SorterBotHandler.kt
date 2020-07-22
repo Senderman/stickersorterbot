@@ -28,13 +28,9 @@ class SorterBotHandler(
         @Value("\${bot.username}")
         private var botUsername: String,
 
-        @Autowired
         private val stickerManager: StickerManager,
-
-        @Autowired
         private val commands:CommandExtractor
 ) : BotHandler(), MessageSender {
-
 
     override fun onUpdate(update: Update): BotApiMethod<*>? {
 

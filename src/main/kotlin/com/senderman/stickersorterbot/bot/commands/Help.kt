@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.objects.Message
 
 @Component("/help")
 class Help(
-        @Autowired
         private val bot: MessageSender
 ) : CommandExecutor {
 

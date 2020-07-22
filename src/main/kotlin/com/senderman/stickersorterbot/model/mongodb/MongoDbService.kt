@@ -3,16 +3,12 @@ package com.senderman.stickersorterbot.model.mongodb
 import com.senderman.stickersorterbot.model.DatabaseService
 import com.senderman.stickersorterbot.model.StickerEntity
 import com.senderman.stickersorterbot.model.User
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
 @Component
 class MongoDbService(
-
-        @Autowired
         private val userRepo: MongoUserRepository
-
 ) : DatabaseService {
 
     private fun createNewUser(userId: Int): User = userRepo.save(User.newUser(userId))

@@ -3,7 +3,6 @@ package com.senderman.stickersorterbot
 import com.senderman.stickersorterbot.model.DatabaseService
 import com.senderman.stickersorterbot.model.StickerEntity
 import com.senderman.stickersorterbot.model.StickerTag
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service
  */
 @Service
 class StickerManager(
-        @Autowired
         @Qualifier("mongoDbService") // change to use another DB
         private val db: DatabaseService
 ) {

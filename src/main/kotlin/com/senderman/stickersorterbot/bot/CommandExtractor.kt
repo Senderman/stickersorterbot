@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component
  */
 @Component
 class CommandExtractor(
-        @Autowired
         private val context: ApplicationContext
 ) {
 

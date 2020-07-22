@@ -13,10 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 
 @Component("/addpack")
 class AddPack<T>(
-        @Autowired
         private val bot: T,
-
-        @Autowired
         private val stickerManager: StickerManager
 ) : CommandExecutor
         where T : MessageSender,
