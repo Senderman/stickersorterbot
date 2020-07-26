@@ -16,5 +16,6 @@ fun CommonAbsSender.sendMessage(
         .setText(text)
         .setReplyToMessageId(replyToMessageId)
         .setReplyMarkup(replyMarkup)
+        .enableHtml()
         .setWebPagePreviewEnabled(enableWebPagePreview)
         .call(this)

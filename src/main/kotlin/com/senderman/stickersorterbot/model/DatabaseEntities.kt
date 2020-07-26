@@ -2,7 +2,6 @@ package com.senderman.stickersorterbot.model
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.TypeAlias
-import java.util.*
 
 @TypeAlias("user")
 class User(

@@ -2,7 +2,7 @@ package com.senderman.stickersorterbot
 
 import com.senderman.stickersorterbot.model.StickerTag
 import com.senderman.stickersorterbot.model.User
-import org.springframework.data.repository.CrudRepository
+import com.senderman.stickersorterbot.model.UserRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -10,7 +10,7 @@ import java.util.*
 
 @Service
 class UserService(
-        private val repo: CrudRepository<User, Int>,
+        private val repo: UserRepository,
         private val passwordEncoder: PasswordEncoder
 ) {
 
@@ -26,6 +26,13 @@ class UserService(
         val user = User(userId, encodedPassword, mutableSetOf(tag))
         return repo.save(user)
     }
+
+    /**
+     * Check if user with given userId exists
+     * @param userId id of user
+     * @return true if exists, else false
+     */
+    fun userExists(userId: Int): Boolean = repo.existsById(userId)
 
     /**
      * Get user data. Creates new user if not exists
@@ -50,5 +57,12 @@ class UserService(
         user.password = passwordEncoder.encode(password)
         return repo.save(user)
     }
+
+    /**
+     * Delete all user data from repo
+     * @param userId id of user
+     */
+    fun deleteUser(userId: Int) = repo.deleteById(userId)
+
 
 }

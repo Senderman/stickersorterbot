@@ -3,15 +3,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "2.4.0-SNAPSHOT"
 	id("io.spring.dependency-management") version "1.0.9.RELEASE"
-	id("com.github.johnrengelman.shadow") version "5.2.0"
-	id("java")
-	id("application")
 
 	kotlin("jvm") version "1.3.72"
 	kotlin("plugin.spring") version "1.3.72"
 }
-
-application.mainClassName = "com.senderman.stickersorterbot.StickerSorterBotApplicationKt"
 
 group = "com.senderman"
 version = "0.0.1-SNAPSHOT"
@@ -52,9 +47,4 @@ tasks.withType<KotlinCompile> {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
 		jvmTarget = "11"
 	}
-}
-
-tasks.shadowJar{
-	exclude("application-local.properties")
-	mergeServiceFiles()
 }

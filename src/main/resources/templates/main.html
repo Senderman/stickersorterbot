@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+    <title>Главная страница</title>
+</head>
+<body>
+
+<form th:action="@{/logout}">
+    <input type="submit" value="Выйти">
+</form>
+<br>
+<form th:action="@{search}">
+    <input type="text" name="searchby" placeholder="Теги через пробел">
+    <input type="submit" value="Искать по тегам">
+</form>
+<br><br>
+
+<div>
+    <div th:each="entityList: ${entityLists}">
+        <div th:each="entity: ${entityList}">
+            <img th:src="entity.src" width="512">
+            <form th:action="@{setTags}">
+                <input type="text" th:value="$entity.tags" class="block">
+                <input type="submit" value="Apply" class="block">
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
