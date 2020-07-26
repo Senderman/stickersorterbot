@@ -2,8 +2,10 @@ package com.senderman.stickersorterbot.bot
 
 import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.services.CommonAbsSender
+import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
+import kotlin.reflect.full.findAnnotation
 
 fun CommonAbsSender.sendMessage(
         chatId: Long,
@@ -32,3 +34,5 @@ fun CommonAbsSender.getFirstNameById(userId: Int): String {
             .replace(">", "&gt;")
             .replace("&", "&amp;")
 }
+
+fun CommandExecutor.getMyCommand(): String = this::class.findAnnotation<Component>()!!.value

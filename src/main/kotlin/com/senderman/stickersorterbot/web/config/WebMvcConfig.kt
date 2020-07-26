@@ -13,4 +13,8 @@ class WebMvcConfig : WebMvcConfigurer {
         registry.addViewController("/login").setViewName("login")
         registry.addViewController("/test").setViewName("test")
     }
+
+    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        registry.addResourceHandler("/webcache/**").addResourceLocations("file:webcache/")
+    }
 }

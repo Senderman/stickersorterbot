@@ -14,20 +14,34 @@
     </form>
 </div>
 <br>
-<form th:action="@{search}">
-    <input type="text" name="searchby" placeholder="Теги через пробел">
+<form th:action="@{main}" method="get">
+    <input type="text" name="searchBy" placeholder="Теги через пробел">
     <input type="submit" value="Искать по тегам">
 </form>
 <br><br>
 
 <div>
-    <div th:each="entityList: ${entityLists}">
-        <div th:each="entity: ${entityList}">
-            <img th:src="entity.src" width="512">
-            <form th:action="@{setTags}">
-                <input type="text" th:value="$entity.tags" class="block">
-                <input type="submit" value="Apply" class="block">
-            </form>
+    <div th:each="webtag : ${webtags}">
+        <h2 th:text="${webtag.name}" class="tagname">Название тега</h2>
+        <div th:each="stickerList : ${webtag.stickers}" class="flex_container">
+            <div th:each="sticker : ${stickerList}">
+                <img th:src="${sticker.src}" class="block">
+                <form th:action="@{main/changeTags}" method="post" class="block sform">
+                    <input type="hidden" name="stickerId" th:value="${sticker.sticker.fileUniqueId}">
+                    <input type="hidden" name="fileId" th:value="${sticker.sticker.fileId}">
+                    <input type="hidden" name="tagName" th:value="${webtag.name}">
+                    <input type="text" name="tags" placeholder="Теги через пробел" class="block">
+                    <p><input type="radio" name="action" value="copy">Копировать в теги</p>
+                    <p><input type="radio" name="action" value="move">Перенести в теги</p>
+                    <input type="submit" value="Применить" class="block">
+                </form>
+                <form th:action="@{main/deleteFromTag}" method="post" class="block sform">
+                    <input type="hidden" name="stickerId" th:value="${sticker.sticker.fileUniqueId}">
+                    <input type="hidden" name="fileId" th:value="${sticker.sticker.fileId}">
+                    <input type="hidden" name="tagName" th:value="${webtag.name}">
+                    <input type="submit" value="Удалить из тега" class="block">
+                </form>
+            </div>
         </div>
     </div>
 </div>

@@ -3,6 +3,7 @@ package com.senderman.stickersorterbot.bot.commands
 import com.annimon.tgbotsmodule.services.CommonAbsSender
 import com.senderman.stickersorterbot.UserService
 import com.senderman.stickersorterbot.bot.CommandExecutor
+import com.senderman.stickersorterbot.bot.getMyCommand
 import com.senderman.stickersorterbot.bot.sendMessage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -19,7 +20,7 @@ class WebSite(
         private val webSiteUrl: String
 ) : CommandExecutor {
 
-    override val command = "/manage"
+    override val command = getMyCommand()
 
     override val desc = "Получить ссылку на сайт"
 
@@ -32,8 +33,8 @@ class WebSite(
         val chatId = message.chatId
         val userId = message.from.id
         if (!userService.userExists(userId)) {
-            bot.sendMessage(chatId, "Вы не зарегистрированы в системе!" +
-                    "Для регистрации, отправьте боту в лс стикер, либо выполните команду" +
+            bot.sendMessage(chatId, "Вы не зарегистрированы в системе! " +
+                    "Для регистрации, отправьте боту в лс стикер, либо выполните команду " +
                     "/password вашНовыйПароль")
             return
         }

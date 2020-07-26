@@ -21,7 +21,7 @@ class WebSecurityConfig(
     override fun configure(http: HttpSecurity) {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/css/**")
+                .antMatchers("/", "/login", "/css/**", "/webcache/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

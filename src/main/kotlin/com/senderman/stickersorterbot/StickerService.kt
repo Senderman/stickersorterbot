@@ -14,6 +14,13 @@ class StickerService(
 ) {
 
     /**
+     * Get all user's stickers sorted by tags
+     * @param userId user's id
+     * @return set of StickerTag objects
+     */
+    fun getAllTagsWithStickers(userId: Int): MutableSet<StickerTag> = userService.getUser(userId).tags
+
+    /**
      * Adds sticker to UNSORTED tag
      * @param userId user's id
      * @param sticker sticker object to add

@@ -4,6 +4,7 @@ import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.services.CommonAbsSender
 import com.senderman.stickersorterbot.StickerService
 import com.senderman.stickersorterbot.bot.CommandExecutor
+import com.senderman.stickersorterbot.bot.getMyCommand
 import com.senderman.stickersorterbot.bot.sendMessage
 import com.senderman.stickersorterbot.model.StickerEntity
 import com.senderman.stickersorterbot.model.StickerTag
@@ -16,7 +17,7 @@ class AddPack(
         private val stickerManager: StickerService
 ) : CommandExecutor {
 
-    override val command = "/addpack"
+    override val command = getMyCommand()
 
     override val desc = "добавить весь пак реплаем на стикер"
 
