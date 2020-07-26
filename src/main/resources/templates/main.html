@@ -7,9 +7,12 @@
 </head>
 <body>
 
-<form th:action="@{/logout}">
-    <input type="submit" value="Выйти">
-</form>
+<div>
+    Залогинен как [[${username}]]
+    <form th:action="@{/logout}">
+        <input type="submit" value="Выйти">
+    </form>
+</div>
 <br>
 <form th:action="@{search}">
     <input type="text" name="searchby" placeholder="Теги через пробел">
