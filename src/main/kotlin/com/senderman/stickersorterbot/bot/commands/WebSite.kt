@@ -32,6 +32,11 @@ class WebSite(
     override fun execute(message: Message) {
         val chatId = message.chatId
         val userId = message.from.id
+        if (!message.isUserMessage) {
+            bot.sendMessage(chatId, "Команду можно использовать только в лс!")
+            return
+        }
+
         if (!userService.userExists(userId)) {
             bot.sendMessage(chatId, "Вы не зарегистрированы в системе! " +
                     "Для регистрации, отправьте боту в лс стикер, либо выполните команду " +

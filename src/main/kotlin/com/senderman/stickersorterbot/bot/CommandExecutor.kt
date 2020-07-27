@@ -1,6 +1,8 @@
 package com.senderman.stickersorterbot.bot
 
+import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
+import kotlin.reflect.full.findAnnotation
 
 /**
  * Interface which represents executor of commands given to bot by user
@@ -28,6 +30,8 @@ interface CommandExecutor {
      * Executes the logic of the given command.
      * @param message user's message with command
      */
-    fun execute(message:Message)
+    fun execute(message: Message)
 
 }
+
+fun CommandExecutor.getMyCommand(): String = this::class.findAnnotation<Component>()!!.value

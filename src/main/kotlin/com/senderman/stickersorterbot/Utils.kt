@@ -8,7 +8,7 @@ package com.senderman.stickersorterbot
  */
 fun <T> Iterable<T>.groupByLimit(limit: Int): Iterable<Iterable<T>> {
     val result: MutableList<MutableList<T>> = mutableListOf()
-    var innerList: MutableList<T> = mutableListOf<T>()
+    var innerList: MutableList<T> = mutableListOf()
     for (el in this) {
         innerList.add(el)
         if (innerList.size == limit) {

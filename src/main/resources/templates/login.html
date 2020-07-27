@@ -6,13 +6,13 @@
 </head>
 <body>
 <p th:if="${param.error}">Неверные данные!</p>
-<form th:action="@{/login}" method="post">
+<form method="post" th:action="@{/login}">
     <div th:hidden="${param.telegram_id != null}">
-        Telegram ID: <input type="text" name="username" placeholder="Ваш Telegram ID"
-                            th:value="${param.telegram_id}">
+        Telegram ID: <input name="username" placeholder="Ваш Telegram ID" th:value="${param.telegram_id}"
+                            type="text">
         <br>
     </div>
-    Пароль: <input type="password" name="password" placeholder="Ваш пароль">
+    Пароль: <input name="password" placeholder="Ваш пароль" type="password">
     <br>
     <input type="submit" value="Залогиниться">
 </form>

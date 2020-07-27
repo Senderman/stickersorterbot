@@ -27,7 +27,7 @@ class SorterBotHandler(
         private var botUsername: String,
 
         private val stickerManager: StickerService,
-        private val commands:CommandExtractor
+        private val commands: CommandExtractor
 ) : BotHandler() {
 
     override fun onUpdate(update: Update): BotApiMethod<*>? {
@@ -90,7 +90,7 @@ class SorterBotHandler(
         val chatId = message.chatId
         val sticker = message.sticker
         val stickerEntity = StickerEntity(sticker.fileUniqueId, sticker.fileId)
-        if (stickerManager.addUnsortedSticker(message.from.id, stickerEntity))
+        if (stickerManager.addUnsortedStickers(message.from.id, listOf(stickerEntity)))
             sendMessage(chatId, "Стикер добавлен в ${StickerTag.UNSORTED} тег!")
         else
             sendMessage(chatId, "Этот стикер уже есть в неотсортированных!")

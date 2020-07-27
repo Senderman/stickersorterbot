@@ -9,14 +9,27 @@ import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 @Component
-class CachingStickerProvider(
+class CachingStickerFileProvider(
         @Value("\${website.cacheDirectory}") private val cacheDir: String,
         private val telegram: CommonAbsSender
 ) {
 
-    val stickersAccessTime = HashMap<String, Long>() // {fileUniqueId: lastAccessTime}
+    private final val stickersAccessTime = HashMap<String, Long>() // {fileUniqueId: lastAccessTime}
     val storeFor = TimeUnit.HOURS.toMillis(2) // for how many milliseconds store stickers
     private var cacheCleaningEnabled = false
+
+    init {
+        val cache = File(cacheDir)
+        if (cache.isDirectory) {
+            for (file in cache.listFiles()!!) {
+                stickersAccessTime[file.nameWithoutExtension] = System.currentTimeMillis()
+            }
+        } else {
+            cache.mkdirs()
+            cache.mkdir()
+        }
+        enableCacheCleaning()
+    }
 
 
     /**
@@ -38,7 +51,7 @@ class CachingStickerProvider(
         return telegram.downloadFile(telegramFile, output)
     }
 
-    fun enableCacheCleaning() {
+    final fun enableCacheCleaning() {
         cacheCleaningEnabled = true
         runCacheCleaning()
     }

@@ -1,7 +1,6 @@
 package com.senderman.stickersorterbot.web.entities
 
 import com.senderman.stickersorterbot.model.StickerEntity
-import java.io.File
 
 class WebTag(
         val name: String,
