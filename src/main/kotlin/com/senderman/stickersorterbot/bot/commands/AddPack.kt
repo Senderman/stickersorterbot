@@ -37,7 +37,7 @@ class AddPack(
         val stickerPack = Methods.Stickers
                 .getStickerSet(setName)
                 .call(bot)
-        val stickers = stickerPack.stickers.map { StickerEntity(it.fileUniqueId, it.fileId) }
+        val stickers = stickerPack.stickers.map { StickerEntity(it.fileUniqueId, it.fileId, it.thumb.fileId) }
         stickerManager.addUnsortedStickers(message.from.id, stickers)
 
         bot.sendMessage(

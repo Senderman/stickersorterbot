@@ -2,6 +2,7 @@ package com.senderman.stickersorterbot.web
 
 import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.services.CommonAbsSender
+import com.senderman.stickersorterbot.model.StickerEntity
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.io.File
@@ -26,7 +27,6 @@ class CachingStickerFileProvider(
             }
         } else {
             cache.mkdirs()
-            cache.mkdir()
         }
         enableCacheCleaning()
     }
@@ -35,19 +35,18 @@ class CachingStickerFileProvider(
     /**
      * Retrieve sticker from cache as file
      * If file exists, returns it, else downloads and returns
-     * @param fileUniqueId fileUniqueId of telegram sticker
-     * @param fileId fileId of telegram sticker
+     * @param sticker StickerEntity object
      * @return File object with sticker
      */
-    fun retrieveSticker(fileUniqueId: String, fileId: String): File {
-        val output = getStickerFile(fileUniqueId)
+    fun retrieveSticker(sticker:StickerEntity): File {
+        val output = getStickerFile(sticker.fileUniqueId)
         if (output.exists()) {
-            updateAccessTime(fileUniqueId)
+            updateAccessTime(sticker.fileUniqueId)
             return output
         }
 
-        val telegramFile = Methods.getFile(fileId).call(telegram)
-        updateAccessTime(fileUniqueId)
+        val telegramFile = Methods.getFile(sticker.thumbFileId).call(telegram)
+        updateAccessTime(sticker.fileUniqueId)
         return telegram.downloadFile(telegramFile, output)
     }
 

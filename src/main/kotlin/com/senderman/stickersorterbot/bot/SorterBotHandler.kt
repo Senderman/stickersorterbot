@@ -60,7 +60,7 @@ class SorterBotHandler(
     private fun handleInlineQuery(query: InlineQuery) {
         val tagsString = query.query.trim()
 
-        if (!tagsString.matches(Regex("(\\p{LD}\\s*)+"))) {
+        if (tagsString.isBlank()) {
             answerInlineQuery(
                     query.id,
                     listOf(InlineQueryResultArticle().apply {
@@ -89,7 +89,7 @@ class SorterBotHandler(
     private fun handleSticker(message: Message) {
         val chatId = message.chatId
         val sticker = message.sticker
-        val stickerEntity = StickerEntity(sticker.fileUniqueId, sticker.fileId)
+        val stickerEntity = StickerEntity(sticker.fileUniqueId, sticker.fileId, sticker.thumb.fileId)
         if (stickerManager.addUnsortedStickers(message.from.id, listOf(stickerEntity)))
             sendMessage(chatId, "Стикер добавлен в ${StickerTag.UNSORTED} тег!")
         else

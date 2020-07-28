@@ -9,7 +9,7 @@
 
 <div>
     Залогинен как [[${username}]]
-    <form th:action="@{/logout}">
+    <form th:action="@{/logout}" method="post">
         <input type="submit" value="Выйти">
     </form>
 </div>

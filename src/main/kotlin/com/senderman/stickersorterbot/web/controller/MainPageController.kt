@@ -10,14 +10,12 @@ import com.senderman.stickersorterbot.web.CachingStickerFileProvider
 import com.senderman.stickersorterbot.web.entities.WebSticker
 import com.senderman.stickersorterbot.web.entities.WebTag
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.server.ResponseStatusException
 import java.security.Principal
 
 @Controller
@@ -34,9 +32,10 @@ class MainPageController(
     @GetMapping
     fun showMainPage(
             @RequestParam("searchBy", required = false, defaultValue = "") searchBy: String,
-            principal: Principal,
+            principal: Principal?,
             model: Model
     ): String {
+        if (principal == null) return "redirect:login"
         val userId = principal.name.toInt()
         val stickerTags = stickerService.getAllTagsWithStickers(userId)
 
@@ -63,10 +62,10 @@ class MainPageController(
         val userId = principal.name.toInt()
         if (action == null) return showMainPage(searchBy, principal, model)
 
-        if (!tags.matches(Regex("(\\p{LD}\\s*)+"))) throw ResponseStatusException(
+        /*if (!tags.matches(Regex("(\\p{LD}\\s*)+"))) throw ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "Укажите стикеры через пробел!"
-        )
+        )*/
 
         val stickerEntity = StickerEntity(stickerId, fileId)
         if (action == "move")
@@ -102,7 +101,7 @@ class MainPageController(
         for (tag in input) {
             val outputStickers = mutableSetOf<WebSticker>()
             for (sticker in tag.stickers) {
-                val stickerFile = stickerCache.retrieveSticker(sticker.fileUniqueId, sticker.fileId)
+                val stickerFile = stickerCache.retrieveSticker(sticker)
                 val webSticker = WebSticker(sticker, "/$cacheDir/${stickerFile.name}")
                 outputStickers.add(webSticker)
             }

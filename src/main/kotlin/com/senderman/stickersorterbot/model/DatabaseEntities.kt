@@ -57,7 +57,8 @@ class StickerTag(
 
 class StickerEntity(
         @Id val fileUniqueId: String,
-        val fileId: String
+        val fileId: String,
+        val thumbFileId: String = ""
 ) {
 
     override fun equals(other: Any?): Boolean {

@@ -6,6 +6,7 @@
 </head>
 <body>
 <p th:if="${param.error}">Неверные данные!</p>
+<p th:if="${param.logout}">Вы вышли из системы</p>
 <form method="post" th:action="@{/login}">
     <div th:hidden="${param.telegram_id != null}">
         Telegram ID: <input name="username" placeholder="Ваш Telegram ID" th:value="${param.telegram_id}"
