@@ -2,20 +2,27 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <!-- SPECTRE CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <!-- /SPECTRE CSS -->
     <title>Логин</title>
 </head>
 <body>
 <p th:if="${param.error}">Неверные данные!</p>
 <p th:if="${param.logout}">Вы вышли из системы</p>
-<form method="post" th:action="@{/login}">
-    <div th:hidden="${param.telegram_id != null}">
-        Telegram ID: <input name="username" placeholder="Ваш Telegram ID" th:value="${param.telegram_id}"
-                            type="text">
+<div class="form-group container grid-sm">
+    <form method="post" th:action="@{/login}">
+        <div th:hidden="${param.telegram_id != null}">
+            <label for="input-login" class="form-label">Telegram ID</label>
+            <input name="username" placeholder="Ваш Telegram ID" th:value="${param.telegram_id}"
+                                type="text" id="input-login" class="form-input">
+            <br>
+        </div>
+        <label for="input-password" class="form-label">Пароль</label>
+        <input name="password" placeholder="Ваш пароль" type="password" id="input-password" class="form-input">
         <br>
-    </div>
-    Пароль: <input name="password" placeholder="Ваш пароль" type="password">
-    <br>
-    <input type="submit" value="Залогиниться">
-</form>
+        <input type="submit" value="Залогиниться" class="btn btn-success">
+    </form>
+</div>
 </body>
 </html>

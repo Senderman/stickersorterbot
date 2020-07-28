@@ -105,7 +105,7 @@ class MainPageController(
                 val webSticker = WebSticker(sticker, "/$cacheDir/${stickerFile.name}")
                 outputStickers.add(webSticker)
             }
-            output.add(WebTag(tag.name, outputStickers.groupByLimit(5)))
+            output.add(WebTag(tag.name, outputStickers.groupByLimit(4)))
         }
 
         model.addAttribute("content", output)
