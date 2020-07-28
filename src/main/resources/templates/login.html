@@ -6,16 +6,23 @@
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
     <!-- /SPECTRE CSS -->
     <title>Логин</title>
+    <style>
+        .page-centered {
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+    </style>
 </head>
 <body>
-<p th:if="${param.error}">Неверные данные!</p>
-<p th:if="${param.logout}">Вы вышли из системы</p>
-<div class="form-group container grid-sm">
-    <form method="post" th:action="@{/login}">
+<span class="label label-error" th:if="${param.error}">Неверные данные!</span>
+<span class="label label-warning" th:if="${param.logout}">Вы вышли из системы</span>
+<div class="form-group container grid-sm d-flex page-centered">
+    <form method="post" th:action="@{/login}" class="form-group">
         <div th:hidden="${param.telegram_id != null}">
             <label for="input-login" class="form-label">Telegram ID</label>
             <input name="username" placeholder="Ваш Telegram ID" th:value="${param.telegram_id}"
-                                type="text" id="input-login" class="form-input">
+                   type="text" id="input-login" class="form-input">
             <br>
         </div>
         <label for="input-password" class="form-label">Пароль</label>

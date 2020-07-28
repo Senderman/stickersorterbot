@@ -13,7 +13,7 @@
 <header class="navbar">
     <section class="navbar-section">
         <div class="form-group">
-            <form method="get" th:action="@{/main}" class="form-group">
+            <form method="get" th:action="@{/main}" class="form-group d-flex">
                 <input name="searchBy" placeholder="Теги через пробел" type="text" class="form-input">
                 <input type="submit" value="Искать по тегам" class="btn">
             </form>
@@ -21,7 +21,7 @@
     </section>
     <section>
         <form th:action="@{/logout}" method="post" class="form-group">
-            Залогинен как [[${username}]]
+            <span class="label">Залогинен как [[${username}]]</span>
             <input type="submit" value="Выйти" class="btn btn-error">
         </form>
     </section>
@@ -32,7 +32,7 @@
 
 <div class="container">
     <div th:each="webtag : ${content}" class="columns">
-        <div class="col-12"><h2 class="p-centered" th:text="${webtag.name}">Название тега</h2></div>
+        <div class="col-12"><h2 class="p-centered text-center" th:text="${webtag.name}">Название тега</h2></div>
 
         <div class="container m-1" th:each="stickerList : ${webtag.stickers}"> <!-- row -->
             <div class="columns">
