@@ -43,3 +43,7 @@
 Чтобы использовать профили, запускайте так:
 
 `java -Dspring.profiles.active=PROFILENAME -jar build/libs/stickersorterbot-1.0.0.jar`
+
+## Справка по использованию
+
+Смотрите [тут](src/main/resources/help.txt) или отправьте боту команду /help
