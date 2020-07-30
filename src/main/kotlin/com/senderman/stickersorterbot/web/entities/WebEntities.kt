@@ -4,7 +4,7 @@ import com.senderman.stickersorterbot.model.StickerEntity
 
 class WebTag(
         val name: String,
-        val stickers: Iterable<Iterable<WebSticker>>
+        val stickers: Iterable<WebSticker>
 )
 
 class WebSticker(

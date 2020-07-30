@@ -3,7 +3,6 @@ package com.senderman.stickersorterbot.web.controller
 import com.annimon.tgbotsmodule.services.CommonAbsSender
 import com.senderman.stickersorterbot.StickerService
 import com.senderman.stickersorterbot.bot.getFirstNameById
-import com.senderman.stickersorterbot.groupByLimit
 import com.senderman.stickersorterbot.model.StickerEntity
 import com.senderman.stickersorterbot.model.StickerTag
 import com.senderman.stickersorterbot.web.CachingStickerFileProvider
@@ -32,10 +31,9 @@ class MainPageController(
     @GetMapping
     fun showMainPage(
             @RequestParam("searchBy", required = false, defaultValue = "") searchBy: String,
-            principal: Principal?,
+            principal: Principal,
             model: Model
     ): String {
-        if (principal == null) return "redirect:login"
         val userId = principal.name.toInt()
         val stickerTags = stickerService.getAllTagsWithStickers(userId)
 
@@ -97,19 +95,18 @@ class MainPageController(
         model.addAttribute("username", username)
 
         val input = source ?: stickerService.getAllTagsWithStickers(userId)
-        val output = mutableListOf<WebTag>()
-        for (tag in input) {
-            val outputStickers = mutableSetOf<WebSticker>()
-            for (sticker in tag.stickers) {
-                val stickerFile = stickerCache.retrieveSticker(sticker)
-                val webSticker = WebSticker(sticker, "/$cacheDir/${stickerFile.name}")
-                outputStickers.add(webSticker)
-            }
-            output.add(WebTag(tag.name, outputStickers.groupByLimit(5)))
+        val webTags: Iterable<WebTag> = input.map { it ->
+            WebTag(it.name, mapToWebStickers(it.stickers))
         }
 
-        model.addAttribute("content", output)
+        model.addAttribute("content", webTags)
         return "main"
     }
+
+    private fun mapToWebStickers(stickers: Iterable<StickerEntity>): Iterable<WebSticker> =
+            stickers.map {
+                val stickerFile = stickerCache.retrieveSticker(it)
+                WebSticker(it, "/$cacheDir/${stickerFile.name}")
+            }
 
 }

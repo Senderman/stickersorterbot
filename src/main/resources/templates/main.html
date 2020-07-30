@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <!-- SPECTRE CSS -->
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css" rel="stylesheet">
     <style>
         .form-wide {
             width: 100%;
@@ -13,6 +14,9 @@
             justify-content: center;
         }
 
+
+
+
     </style>
     <title>Главная страница</title>
 </head>
@@ -21,9 +25,9 @@
 <header class="navbar">
     <section class="navbar-section">
         <div class="form-group">
-            <form method="get" th:action="@{/main}" class="form-group d-flex">
+            <form class="d-flex" method="get" th:action="@{/main}">
                 <input name="searchBy" placeholder="Теги через пробел" type="text" class="form-input">
-                <input type="submit" value="Искать по тегам" class="btn">
+                <button class="btn" type="submit"><i class="icon icon-search"></i></button>
             </form>
         </div>
     </section>
@@ -40,40 +44,38 @@
 
 <div class="container">
     <div th:each="webtag : ${content}" class="columns">
-        <div class="col-12"><h2 class="p-centered text-center" th:text="${webtag.name}">Название тега</h2></div>
+        <div class="col-12">
+            <h2 class="p-centered text-center" th:text="${webtag.name}">Название тега</h2>
+        </div>
+        <!-- TODO rename tag feature -->
 
-        <div class="container m-1" th:each="stickerList : ${webtag.stickers}"> <!-- row -->
-            <div class="columns">
-
-                <div th:each="sticker : ${stickerList}" class="column col-2">
-                    <img th:src="${sticker.src}" class="p-centered">
-                    <form method="post" th:action="@{/main/changeTags}" class="form-group">
-                        <input name="stickerId" th:value="${sticker.sticker.fileUniqueId}" type="hidden">
-                        <input name="fileId" th:value="${sticker.sticker.fileId}" type="hidden">
-                        <input name="tagName" th:value="${webtag.name}" type="hidden">
-                        <input name="searchBy" th:if="${param.searchBy}" th:value="${param.searchBy}" type="hidden">
-                        <input class="form-input" name="tags" placeholder="Теги через пробел" type="text">
-                        <label class="form-radio">
-                            <input name="action" type="radio" value="copy">
-                            <i class="form-icon"></i> Копировать в теги
-                        </label>
-                        <label class="form-radio">
-                            <input name="action" type="radio" value="move">
-                            <i class="form-icon"></i> Перенести в теги
-                        </label>
-                        <input class="btn form-wide" type="submit" value="Применить">
-                    </form>
-                    <form class="form-group" method="post" th:action="@{/main/deleteFromTag}">
-                        <input name="stickerId" th:value="${sticker.sticker.fileUniqueId}" type="hidden">
-                        <input name="fileId" th:value="${sticker.sticker.fileId}" type="hidden">
-                        <input name="searchBy" th:if="${param.searchBy}" th:value="${param.searchBy}" type="hidden">
-                        <input name="tagName" th:value="${webtag.name}" type="hidden">
-                        <input class="btn form-wide" type="submit" value="Удалить из тега">
-                    </form>
-                </div>
-
+        <div class="columns m-2">
+            <div class="column" th:each="sticker : ${webtag.stickers}">
+                <img class="p-centered" th:src="${sticker.src}">
+                <form class="form-group" method="post" th:action="@{/main/changeTags}">
+                    <input name="stickerId" th:value="${sticker.sticker.fileUniqueId}" type="hidden">
+                    <input name="fileId" th:value="${sticker.sticker.fileId}" type="hidden">
+                    <input name="tagName" th:value="${webtag.name}" type="hidden">
+                    <input name="searchBy" th:if="${param.searchBy}" th:value="${param.searchBy}" type="hidden">
+                    <input class="form-input" name="tags" placeholder="Теги через пробел" type="text">
+                    <label class="form-radio">
+                        <input name="action" type="radio" value="copy">
+                        <i class="form-icon"></i> Копировать в теги
+                    </label>
+                    <label class="form-radio">
+                        <input name="action" type="radio" value="move">
+                        <i class="form-icon"></i> Перенести в теги
+                    </label>
+                    <input class="btn form-wide" type="submit" value="Применить">
+                </form>
+                <form class="form-group" method="post" th:action="@{/main/deleteFromTag}">
+                    <input name="stickerId" th:value="${sticker.sticker.fileUniqueId}" type="hidden">
+                    <input name="fileId" th:value="${sticker.sticker.fileId}" type="hidden">
+                    <input name="searchBy" th:if="${param.searchBy}" th:value="${param.searchBy}" type="hidden">
+                    <input name="tagName" th:value="${webtag.name}" type="hidden">
+                    <input class="btn form-wide" type="submit" value="Удалить из тега">
+                </form>
             </div>
-            <hr class="text-gray mt-4">
         </div>
     </div>
 </div>
