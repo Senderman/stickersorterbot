@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta content="width=device-width" name="viewport">
     <!-- SPECTRE CSS -->
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
     <link href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css" rel="stylesheet">
@@ -9,14 +10,9 @@
         .form-wide {
             width: 100%;
         }
-
         .columns {
             justify-content: center;
         }
-
-
-
-
     </style>
     <title>Главная страница</title>
 </head>
@@ -24,20 +20,19 @@
 
 <header class="navbar">
     <section class="navbar-section">
-        <div class="form-group">
-            <form class="d-flex" method="get" th:action="@{/main}">
-                <input name="searchBy" placeholder="Теги через пробел" type="text" class="form-input">
-                <button class="btn" type="submit"><i class="icon icon-search"></i></button>
-            </form>
-        </div>
-    </section>
-    <section>
-        <form th:action="@{/logout}" method="post" class="form-group">
+        <form class="d-flex" method="post" th:action="@{/logout}">
             <span class="label">Залогинен как [[${username}]]</span>
-            <input type="submit" value="Выйти" class="btn btn-error">
+            <input class="btn btn-error" type="submit" value="Выйти">
+        </form>
+    </section>
+    <section class="navbar-section">
+        <form class="d-flex" method="get" th:action="@{/main}">
+            <input class="form-input" name="searchBy" placeholder="Теги через пробел" type="text">
+            <button class="btn" type="submit"><i class="icon icon-search"></i></button>
         </form>
     </section>
 </header>
+
 <br>
 <br>
 <br>

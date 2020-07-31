@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta content="width=device-width" name="viewport">
     <!-- SPECTRE CSS -->
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
     <title>Логин</title>
@@ -10,6 +11,9 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
+        }
+        .form-wide {
+            width: 100%;
         }
     </style>
 </head>
@@ -27,7 +31,7 @@
         <label for="input-password" class="form-label">Пароль</label>
         <input name="password" placeholder="Ваш пароль" type="password" id="input-password" class="form-input">
         <br>
-        <input type="submit" value="Залогиниться" class="btn btn-success">
+        <input class="btn btn-success form-wide" type="submit" value="Залогиниться">
     </form>
 </div>
 </body>
