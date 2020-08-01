@@ -38,11 +38,17 @@ class AddPack(
                 .getStickerSet(setName)
                 .call(bot)
         val stickers = stickerPack.stickers.map { StickerEntity(it.fileUniqueId, it.fileId, it.thumb.fileId) }
-        stickerManager.addUnsortedStickers(message.from.id, stickers)
-
+        val packName = stickerPack.name.replace(Regex("\\s+"), "_")
+        stickerManager.addStickersToTags(
+                message.from.id,
+                listOf(packName),
+                stickers
+        )
+        val stickerEntity = StickerEntity(reply.sticker.fileUniqueId, reply.sticker.fileId, reply.sticker.thumb.fileId)
+        stickerManager.removeStickerFromTag(message.from.id, StickerTag.UNSORTED, stickerEntity)
         bot.sendMessage(
                 chatId,
-                "Стикеры из стикерпака ${stickerPack.title} успешно добавлены в тег ${StickerTag.UNSORTED}!"
+                "Стикеры из стикерпака ${stickerPack.title} успешно добавлены в тег $packName!"
         )
     }
 }
