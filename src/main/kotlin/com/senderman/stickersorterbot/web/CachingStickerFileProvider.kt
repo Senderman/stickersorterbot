@@ -2,7 +2,7 @@ package com.senderman.stickersorterbot.web
 
 import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.services.CommonAbsSender
-import com.senderman.stickersorterbot.model.StickerEntity
+import com.senderman.stickersorterbot.model.Sticker
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.io.File
@@ -38,7 +38,7 @@ class CachingStickerFileProvider(
      * @param sticker StickerEntity object
      * @return File object with sticker
      */
-    fun retrieveSticker(sticker:StickerEntity): File {
+    fun retrieveSticker(sticker: Sticker): File {
         val output = getStickerFile(sticker.fileUniqueId)
         if (output.exists()) {
             updateAccessTime(sticker.fileUniqueId)

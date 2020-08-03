@@ -2,19 +2,18 @@ package com.senderman.stickersorterbot.bot.commands
 
 import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.services.CommonAbsSender
-import com.senderman.stickersorterbot.StickerService
 import com.senderman.stickersorterbot.bot.CommandExecutor
 import com.senderman.stickersorterbot.bot.getMyCommand
 import com.senderman.stickersorterbot.bot.sendMessage
-import com.senderman.stickersorterbot.model.StickerEntity
-import com.senderman.stickersorterbot.model.StickerTag
+import com.senderman.stickersorterbot.model.Sticker
+import com.senderman.stickersorterbot.model.StickerRepository
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Message
 
 @Component("/addpack")
 class AddPack(
         private val bot: CommonAbsSender,
-        private val stickerManager: StickerService
+        private val stickerRepo: StickerRepository
 ) : CommandExecutor {
 
     override val command = getMyCommand()
@@ -32,23 +31,26 @@ class AddPack(
             bot.sendMessage(chatId, "Ответьте этой командой на стикер, стикерпак которого вы хотите добавить!")
             return
         }
-        val setName = reply.sticker.setName
+
         bot.sendMessage(chatId, "Добавляю...")
+        val setName = reply.sticker.setName
         val stickerPack = Methods.Stickers
                 .getStickerSet(setName)
                 .call(bot)
-        val stickers = stickerPack.stickers.map { StickerEntity(it.fileUniqueId, it.fileId, it.thumb.fileId) }
-        val packName = stickerPack.name.replace(Regex("\\s+"), "_")
-        stickerManager.addStickersToTags(
-                message.from.id,
-                listOf(packName),
-                stickers
-        )
-        val stickerEntity = StickerEntity(reply.sticker.fileUniqueId, reply.sticker.fileId, reply.sticker.thumb.fileId)
-        stickerManager.removeStickerFromTag(message.from.id, StickerTag.UNSORTED, stickerEntity)
+
+        val stickers = stickerPack.stickers.map {
+            Sticker(
+                    userId = message.from.id,
+                    fileUniqueId = it.fileUniqueId,
+                    fileId = it.fileId,
+                    thumbFileId = it.thumb.fileId
+            )
+        }
+
+        stickerRepo.saveAll(stickers)
         bot.sendMessage(
                 chatId,
-                "Стикеры из стикерпака ${stickerPack.title} успешно добавлены в тег $packName!"
+                "Стикеры из стикерпака ${stickerPack.title} успешно добавлены в список!"
         )
     }
 }

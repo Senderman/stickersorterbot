@@ -2,18 +2,15 @@ package com.senderman.stickersorterbot.bot
 
 import com.annimon.tgbotsmodule.BotHandler
 import com.annimon.tgbotsmodule.api.methods.Methods
-import com.senderman.stickersorterbot.StickerService
-import com.senderman.stickersorterbot.model.StickerEntity
-import com.senderman.stickersorterbot.model.StickerTag
+import com.senderman.stickersorterbot.model.Sticker
+import com.senderman.stickersorterbot.model.StickerRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery
-import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResult
-import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.cached.InlineQueryResultCachedSticker
 import java.util.*
 
@@ -26,7 +23,7 @@ class SorterBotHandler(
         @Value("\${bot.username}")
         private var botUsername: String,
 
-        private val stickerManager: StickerService,
+        private val stickerRepo: StickerRepository,
         private val commands: CommandExtractor
 ) : BotHandler() {
 
@@ -60,27 +57,18 @@ class SorterBotHandler(
     private fun handleInlineQuery(query: InlineQuery) {
         val tagsString = query.query.trim()
 
-        if (tagsString.isBlank()) {
-            answerInlineQuery(
-                    query.id,
-                    listOf(InlineQueryResultArticle().apply {
-                        id = "error"
-                        title = "Укажите теги через пробел!"
-                        inputMessageContent = InputTextMessageContent().apply {
-                            messageText = "Укажите теги через пробел: @$botUsername котики аниме тортики"
-                        }
-                    })
-            )
-            return
-        }
+        val stickers: List<Sticker> = (
+                if (tagsString.isBlank())
+                    stickerRepo.findAllByUserId(query.from.id)
+                else
+                    stickerRepo.findByUserIdAndTagsIn(query.from.id, tagsString.split(Regex("\\+s")))
+                )
+                .take(50)
 
-        val tags = tagsString.split(Regex("\\s+"))
-        val stickers = stickerManager.getStickersFromTags(query.from.id, tags).take(50) // telegram limit
         val result = stickers.map {
-            InlineQueryResultCachedSticker().apply {
-                id = it.fileUniqueId
-                stickerFileId = it.fileId
-            }
+            InlineQueryResultCachedSticker()
+                    .setId(it.fileUniqueId)
+                    .setStickerFileId(it.fileId)
         }
         answerInlineQuery(query.id, result)
 
@@ -88,12 +76,21 @@ class SorterBotHandler(
 
     private fun handleSticker(message: Message) {
         val chatId = message.chatId
+        val userId = message.from.id
         val sticker = message.sticker
-        val stickerEntity = StickerEntity(sticker.fileUniqueId, sticker.fileId, sticker.thumb.fileId)
-        if (stickerManager.addUnsortedStickers(message.from.id, listOf(stickerEntity)))
-            sendMessage(chatId, "Стикер добавлен в ${StickerTag.UNSORTED} тег!")
-        else
-            sendMessage(chatId, "Этот стикер уже есть в неотсортированных!")
+        val stickerEntity = Sticker(
+                userId = userId,
+                fileUniqueId = sticker.fileUniqueId,
+                fileId = sticker.fileId,
+                thumbFileId = sticker.thumb.fileId
+        )
+        if (stickerRepo.existsById(Sticker.generateId(userId, sticker.fileUniqueId)))
+            sendMessage(chatId, "Этот стикер уже есть в вашем списке!")
+        else {
+            stickerRepo.save(stickerEntity)
+            sendMessage(chatId, "Стикер добавлен в ваш список!")
+        }
+
     }
 
     private fun answerInlineQuery(id: String, results: List<InlineQueryResult>) {

@@ -1,13 +1,11 @@
 package com.senderman.stickersorterbot.web.controller
 
 import com.annimon.tgbotsmodule.services.CommonAbsSender
-import com.senderman.stickersorterbot.StickerService
 import com.senderman.stickersorterbot.bot.getFirstNameById
-import com.senderman.stickersorterbot.model.StickerEntity
-import com.senderman.stickersorterbot.model.StickerTag
+import com.senderman.stickersorterbot.model.Sticker
+import com.senderman.stickersorterbot.model.StickerRepository
 import com.senderman.stickersorterbot.web.CachingStickerFileProvider
 import com.senderman.stickersorterbot.web.entities.WebSticker
-import com.senderman.stickersorterbot.web.entities.WebTag
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -24,89 +22,55 @@ class MainPageController(
         private val cacheDir: String,
 
         private val telegram: CommonAbsSender,
-        private val stickerService: StickerService,
+        private val stickerRepo: StickerRepository,
         private val stickerCache: CachingStickerFileProvider
 ) {
 
     @GetMapping
     fun showMainPage(
-            @RequestParam("searchBy", required = false, defaultValue = "") searchBy: String,
+            @RequestParam("search", required = false, defaultValue = "") search: String,
             principal: Principal,
             model: Model
     ): String {
         val userId = principal.name.toInt()
-        val stickerTags = stickerService.getAllTagsWithStickers(userId)
+        val stickers = stickerRepo.findAllByUserId(userId)
 
         // filter by search query
-        if (!searchBy.isBlank()) {
-            val tagsToFind = searchBy.split(Regex("\\s+"))
-            stickerTags.removeAll { it.name !in tagsToFind }
-        }
+        /* if (!search.isBlank()) {
+             val tagsToFind = search.split(Regex("\\s+"))
+             stickers.removeAll { it.name !in tagsToFind }
+         }*/
 
-        return generateWebContent(userId, model, stickerTags)
+        return generateWebContent(userId, model, stickers)
     }
 
-    @PostMapping("changeTags")
-    fun changeTags(
-            @RequestParam("action", required = false) action: String?, // will be "copy" or "move" or null
-            @RequestParam("searchBy", required = false, defaultValue = "") searchBy: String,
-            @RequestParam("tags", required = false, defaultValue = "") tags: String,
-            stickerId: String,
-            fileId: String,
-            tagName: String,
+    @PostMapping("deleteSticker")
+    fun deleteSticker(
+            @RequestParam("search", required = false, defaultValue = "") search: String,
+            fileUniqueId: String,
             principal: Principal,
             model: Model
     ): String {
         val userId = principal.name.toInt()
-        if (action == null) return showMainPage(searchBy, principal, model)
-
-        /*if (!tags.matches(Regex("(\\p{LD}\\s*)+"))) throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Укажите стикеры через пробел!"
-        )*/
-
-        val stickerEntity = StickerEntity(stickerId, fileId)
-        if (action == "move")
-            stickerService.removeStickerFromTag(userId, tagName, stickerEntity)
-
-        stickerService.addStickersToTags(userId, tags.split(Regex("\\s+")), listOf(stickerEntity))
-        return showMainPage(searchBy, principal, model)
-    }
-
-    @PostMapping("deleteFromTag")
-    fun deleteFromTag(
-            @RequestParam("searchBy", required = false, defaultValue = "") searchBy: String,
-            stickerId: String,
-            fileId: String,
-            tagName: String,
-            principal: Principal,
-            model: Model
-    ): String {
-        val userId = principal.name.toInt()
-        val stickerEntity = StickerEntity(stickerId, fileId)
-        stickerService.removeStickerFromTag(userId, tagName, stickerEntity)
-        return showMainPage(searchBy, principal, model)
+        stickerRepo.deleteById(Sticker.generateId(userId, fileUniqueId))
+        return showMainPage(search, principal, model)
     }
 
     // generate web page's content from user's stickers or from given source, if present
-    private fun generateWebContent(userId: Int, model: Model, source: MutableSet<StickerTag>? = null): String {
+    private fun generateWebContent(userId: Int, model: Model, source: MutableSet<Sticker>): String {
 
         val username = telegram.getFirstNameById(userId)
         model.addAttribute("username", username)
 
-        val input = source ?: stickerService.getAllTagsWithStickers(userId)
-        val webTags: Iterable<WebTag> = input.map { it ->
-            WebTag(it.name, mapToWebStickers(it.stickers))
-        }
+        val webStickers: Iterable<WebSticker> = mapToWebStickers(source)
 
-        model.addAttribute("content", webTags)
+        model.addAttribute("stickers", webStickers)
         return "main"
     }
 
-    private fun mapToWebStickers(stickers: Iterable<StickerEntity>): Iterable<WebSticker> =
+    private fun mapToWebStickers(stickers: Iterable<Sticker>): Iterable<WebSticker> =
             stickers.map {
                 val stickerFile = stickerCache.retrieveSticker(it)
                 WebSticker(it, "/$cacheDir/${stickerFile.name}")
             }
-
 }
