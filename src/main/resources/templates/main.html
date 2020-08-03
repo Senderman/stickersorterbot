@@ -41,8 +41,8 @@
 <div class="container">
     <div class="columns">
         <div class="columns m-2">
-            <div class="column" th:each="sticker : ${stickers}">
-                <img class="p-centered" th:src="${sticker.src}">
+            <div class="column mt-2" th:each="sticker : ${stickers}">
+                <img class="p-centered img-responsive" th:src="${sticker.src}">
                 <form class="form-group" method="post" th:action="@{/main/changeTags}">
                     <input name="fileUniqueId" th:value="${sticker.sticker.fileUniqueId}" type="hidden">
                     <input name="search" th:if="${param.search}" th:value="${param.search}" type="hidden">
