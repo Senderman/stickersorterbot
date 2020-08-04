@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import java.security.Principal
 
@@ -31,27 +30,15 @@ class MainPageController(
             model: Model
     ): String {
         val userId = principal.name.toInt()
-        val stickers = stickerRepo.findAllByUserId(userId)
 
-        // filter by search query
-        /* if (!search.isBlank()) {
-             val tagsToFind = search.split(Regex("\\s+"))
-             stickers.removeAll { it.name !in tagsToFind }
-         }*/
+        val stickers:MutableSet<Sticker> = if (search.isBlank())
+            stickerRepo.findAllByUserId(userId)
+        else {
+            val tagsToFind = search.split(Regex("\\s+"))
+            stickerRepo.findAllByUserIdAndTagsContaining(userId, tagsToFind)
+        }
 
         return generateWebContent(userId, model, stickers)
-    }
-
-    @PostMapping("/deleteSticker")
-    fun deleteSticker(
-            @RequestParam("search", required = false, defaultValue = "") search: String,
-            fileUniqueId: String,
-            principal: Principal,
-            model: Model
-    ): String {
-        val userId = principal.name.toInt()
-        stickerRepo.deleteById(Sticker.generateId(userId, fileUniqueId))
-        return showMainPage(search, principal, model)
     }
 
     // generate web page's content from user's stickers or from given source, if present

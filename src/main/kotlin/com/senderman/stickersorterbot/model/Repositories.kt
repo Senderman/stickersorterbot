@@ -14,6 +14,6 @@ interface StickerRepository : MongoRepository<Sticker, String> {
 
     fun findAllByUserId(userId: Int): MutableSet<Sticker>
 
-    fun findByUserIdAndTagsIn(userId: Int, tags: Collection<String>): MutableSet<Sticker>
+    fun findAllByUserIdAndTagsContaining(userId: Int, tags: Collection<String>): MutableSet<Sticker>
 
 }

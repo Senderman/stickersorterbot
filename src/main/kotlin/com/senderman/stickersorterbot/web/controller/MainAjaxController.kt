@@ -29,4 +29,17 @@ class MainAjaxController(
             stickerRepo.save(it)
         }
     }
+
+    class DeleteStickerAjaxBody(
+            val fileUniqueId: String
+    )
+
+    @PostMapping("/deleteSticker")
+    fun deleteSticker(
+            @RequestBody ajax: DeleteStickerAjaxBody,
+            principal: Principal
+    ) {
+        val userId = principal.name.toInt()
+        stickerRepo.deleteById(Sticker.generateId(userId, ajax.fileUniqueId))
+    }
 }

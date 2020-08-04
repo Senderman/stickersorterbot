@@ -61,10 +61,9 @@ class SorterBotHandler(
                 if (tagsString.isBlank())
                     stickerRepo.findAllByUserId(query.from.id)
                 else
-                    stickerRepo.findByUserIdAndTagsIn(query.from.id, tagsString.split(Regex("\\+s")))
+                    stickerRepo.findAllByUserIdAndTagsContaining(query.from.id, tagsString.split(Regex("\\s+")))
                 )
                 .take(50)
-
         val result = stickers.map {
             InlineQueryResultCachedSticker()
                     .setId(it.fileUniqueId)
