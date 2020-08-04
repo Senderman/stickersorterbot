@@ -30,7 +30,7 @@ class WebSecurityConfig(
 
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/main")
+                .defaultSuccessUrl("/")
                 .permitAll()
 
                 .and()

@@ -33,11 +33,6 @@ class UserService(
     fun userExists(userId: Int): Boolean = repo.existsById(userId)
 
     /**
-     * Get user data. Creates new user if not exists
-     */
-    fun getUser(userId: Int): User = repo.findByIdOrNull(userId) ?: newUser(userId)
-
-    /**
      * Changes user's password. Creates a new user if not exists
      * @param userId id of user
      * @param password raw password

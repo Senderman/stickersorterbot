@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta content="width=device-width" name="viewport">
     <!-- SPECTRE CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link href="https://unpkg.com/spectre.css/dist/spectre.min.css" rel="stylesheet">
     <title>Логин</title>
     <style>
         .page-centered {
@@ -15,21 +15,22 @@
         .form-wide {
             width: 100%;
         }
+
     </style>
 </head>
 <body>
 <span class="label label-error" th:if="${param.error}">Неверные данные!</span>
 <span class="label label-warning" th:if="${param.logout}">Вы вышли из системы</span>
 <div class="form-group container grid-sm d-flex page-centered">
-    <form method="post" th:action="@{/login}" class="form-group">
+    <form class="form-group" method="post" th:action="@{/login}">
         <div th:hidden="${param.telegram_id != null}">
-            <label for="input-login" class="form-label">Telegram ID</label>
-            <input name="username" placeholder="Ваш Telegram ID" th:value="${param.telegram_id}"
-                   type="text" id="input-login" class="form-input">
+            <label class="form-label" for="input-login">Telegram ID</label>
+            <input class="form-input" id="input-login" name="username"
+                   placeholder="Ваш Telegram ID" th:value="${param.telegram_id}" type="text">
             <br>
         </div>
-        <label for="input-password" class="form-label">Пароль</label>
-        <input name="password" placeholder="Ваш пароль" type="password" id="input-password" class="form-input">
+        <label class="form-label" for="input-password">Пароль</label>
+        <input class="form-input" id="input-password" name="password" placeholder="Ваш пароль" type="password">
         <br>
         <input class="btn btn-success form-wide" type="submit" value="Залогиниться">
     </form>

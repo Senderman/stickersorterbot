@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width" name="viewport">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <!-- SPECTRE CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link href="https://unpkg.com/spectre.css/dist/spectre.min.css" rel="stylesheet">
     <link href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css" rel="stylesheet">
     <style>
         .form-wide {
@@ -15,6 +17,45 @@
         }
 
     </style>
+
+    <script>
+
+        function tagsBtnClick(btn) {
+            stickerDiv = btn.parentElement
+            tags = stickerDiv.querySelector('input#tags').value
+            fileUniqueId = stickerDiv.querySelector('input#fileUniqueId').value
+            setTags(fileUniqueId, tags)
+        }
+
+        function setTags(fileUniqueId, tags) {
+            data = JSON.stringify({
+                fileUniqueId: fileUniqueId,
+                tags: tags
+            })
+
+            csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content')
+            csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content')
+
+            headers = {}
+            headers['Content-Type'] = 'application/json'
+            headers[csrfHeader] = csrfToken
+
+            fetch('/setTags', {
+                method: 'POST',
+                headers: headers,
+                body: data
+            })
+            .then(r => {
+                if (r.status == 200) {
+                    alert("Успешно!")
+                } else {
+                    alert("Ошибка!")
+                }
+            })
+        }
+
+
+    </script>
     <title>Главная страница</title>
 </head>
 <body>
@@ -39,18 +80,20 @@
 <br>
 
 <div class="container">
-    <div class="columns">
-        <div class="columns m-2">
-            <div class="column mt-2" th:each="sticker : ${stickers}">
+    <div class="columns m-2">
+        <div class="column card mt-2" th:each="sticker : ${stickers}">
+            <div class="card-image">
                 <img class="p-centered img-responsive" th:src="${sticker.src}">
-                <form class="form-group" method="post" th:action="@{/main/changeTags}">
-                    <input name="fileUniqueId" th:value="${sticker.sticker.fileUniqueId}" type="hidden">
-                    <input name="search" th:if="${param.search}" th:value="${param.search}" type="hidden">
-                    <input class="form-input" name="tags" placeholder="Теги через пробел" type="text"
-                           th:value="${sticker.tags}">
-                    <input class="btn form-wide" type="submit" value="Применить">
-                </form>
-                <form class="form-group" method="post" th:action="@{/main/deleteSticker}">
+            </div>
+            <div class="card-body">
+                <div>
+                    <input id="fileUniqueId" th:value="${sticker.sticker.fileUniqueId}" type="hidden">
+                    <input class="form-input" id="tags" placeholder="Теги через пробел" th:value="${sticker.tags}"
+                           type="text">
+                    <input class="btn form-wide" id="setTagsBtn" onclick="tagsBtnClick(this)" type="button"
+                           value="Применить">
+                </div>
+                <form class="form-group" method="post" th:action="@{/deleteSticker}">
                     <input name="fileUniqueId" th:value="${sticker.sticker.fileUniqueId}" type="hidden">
                     <input name="search" th:if="${param.search}" th:value="${param.search}" type="hidden">
                     <input class="btn form-wide" type="submit" value="Удалить стикер">

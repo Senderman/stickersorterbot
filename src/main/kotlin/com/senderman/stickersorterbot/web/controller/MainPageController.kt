@@ -11,12 +11,10 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import java.security.Principal
 
 @Controller
-@RequestMapping("/", "main")
 class MainPageController(
         @Value("\${website.cacheDirectory}")
         private val cacheDir: String,
@@ -26,7 +24,7 @@ class MainPageController(
         private val stickerCache: CachingStickerFileProvider
 ) {
 
-    @GetMapping
+    @GetMapping("/")
     fun showMainPage(
             @RequestParam("search", required = false, defaultValue = "") search: String,
             principal: Principal,
@@ -44,7 +42,7 @@ class MainPageController(
         return generateWebContent(userId, model, stickers)
     }
 
-    @PostMapping("deleteSticker")
+    @PostMapping("/deleteSticker")
     fun deleteSticker(
             @RequestParam("search", required = false, defaultValue = "") search: String,
             fileUniqueId: String,

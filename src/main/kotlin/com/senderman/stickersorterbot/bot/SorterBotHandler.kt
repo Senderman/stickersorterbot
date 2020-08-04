@@ -55,7 +55,7 @@ class SorterBotHandler(
     }
 
     private fun handleInlineQuery(query: InlineQuery) {
-        val tagsString = query.query.trim()
+        val tagsString = query.query.trim().toLowerCase()
 
         val stickers: List<Sticker> = (
                 if (tagsString.isBlank())
