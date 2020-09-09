@@ -20,9 +20,6 @@
 
 Имеется поддержка профилей, для этого в том же каталоге создайте файл application-PROFILENAME.properties
 
-### Смена СУБД
-
-Смотрите комментарии [тут](src/main/kotlin/com/senderman/stickersorterbot/model/UserRepository.kt)
 
 ## Сборка
 
